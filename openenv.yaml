@@ -1,0 +1,8 @@
+name: code-review-env
+version: 1.0
+
+action_space:
+  type: string
+  enum: ["approve", "request_changes", "reject", "flag_security"]
+
+reward_range: [-1, 1]
