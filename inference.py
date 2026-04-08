@@ -6,8 +6,12 @@ from env.tasks import EasyTask, MediumTask, HardTask
 
 API_BASE_URL = "https://router.huggingface.co/v1"
 MODEL_NAME = "mistralai/Mistral-7B-Instruct-v0.1"
-import os
+
 HF_TOKEN = os.getenv("HF_TOKEN")
+
+if HF_TOKEN is None:
+    raise ValueError("HF_TOKEN not set")
+
 client = OpenAI(
     base_url=API_BASE_URL,
     api_key=HF_TOKEN
@@ -22,7 +26,7 @@ def get_action(prompt):
         )
         return response.choices[0].message.content.strip()
     except:
-        return "flag_security" 
+        return "flag_security"
 
 def run(task):
     env = CodeReviewEnv(task)
@@ -30,10 +34,8 @@ def run(task):
 
     prompt = f"""
 You are a security code reviewer.
-
 Code:
 {obs['code']}
-
 Choose one:
 approve / request_changes / reject / flag_security
 """
@@ -42,7 +44,6 @@ approve / request_changes / reject / flag_security
 
     _, reward, _, _ = env.step(action)
     return reward
-
 
 if __name__ == "__main__":
     tasks = [EasyTask(), MediumTask(), HardTask()]
