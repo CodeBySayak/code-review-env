@@ -3,20 +3,25 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-import gradio as gr
+from fastapi import FastAPI
 from env.env import CodeReviewEnv
 from env.tasks import EasyTask
 
-def run_env():
+import uvicorn
+
+app = FastAPI()
+
+# REQUIRED FOR OPENENV
+@app.post("/reset")
+def reset():
     env = CodeReviewEnv(EasyTask())
     obs = env.reset()
-    return str(obs)
+    return obs
 
-iface = gr.Interface(
-    fn=run_env,
-    inputs=[],
-    outputs="text",
-    title="AI Code Review Environment"
-)
+# optional root endpoint
+@app.get("/")
+def root():
+    return {"message": "Code Review Env Running"}
 
-iface.launch(server_name="0.0.0.0", server_port=7860)
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=7860)
