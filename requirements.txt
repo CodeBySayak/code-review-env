@@ -1,3 +1,5 @@
 openai
 pydantic
 gradio
+fastapi
+uvicorn
